@@ -14,6 +14,7 @@ namespace CosmosWebApiTest.Controllers
    {
       ILogger m_Logger;
       static Container m_Container;
+      static HashSet<Callback> m_Callbacks;
 
       public BookController(ILogger<Book> logger, IOptionsSnapshot<CosmosConn> option)
       {
@@ -50,6 +51,11 @@ namespace CosmosWebApiTest.Controllers
          {
             var bookCreate = await m_Container.CreateItemAsync<Book>(book, new PartitionKey(book.Category));
 
+            foreach (var call in m_Callbacks)
+            {
+               call.InvokeAsync<Book>(bookCreate.Resource);
+            }
+
             return bookCreate.Resource;
          }
 
@@ -69,6 +75,25 @@ namespace CosmosWebApiTest.Controllers
             return ex.Message;
          }
                 
+      }
+
+      // Subscribe to newly created books
+      [HttpPost, Route("Book/subscribe")]
+      public IActionResult Subscribe(Callback callback)
+      {
+         m_Callbacks.Add(callback);
+         return CreatedAtRoute(nameof(Unsubscribe), new
+         {
+            subscriptionId = callback.Id
+         }, string.Empty);
+      }
+
+      [HttpDelete, Route("Books/subscribe/{callbackId}", Name = nameof(Unsubscribe))]
+      public IActionResult Unsubscribe(string callbackID)
+      {
+         var callBack = m_Callbacks.Where(x => x.Id.ToString() == callbackID).FirstOrDefault();
+         m_Callbacks.Remove(callBack);
+         return Ok();
       }
    }
 }
