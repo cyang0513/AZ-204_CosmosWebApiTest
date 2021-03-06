@@ -29,7 +29,8 @@ namespace CosmosWebApiTest
                        //Local
                        //az.Connect(localConf.GetConnectionString("AppConfig"));
 
-                       //az.Connect(new Uri($"https://chyaappconfig.azconfig.io"), new DefaultAzureCredential());
+                       //Azure, SMI
+                       az.Connect(new Uri($"https://chyaappconfig.azconfig.io"), new DefaultAzureCredential());
 
                        //Select key of CHYA:COSMOS
                        az.Select("CHYA:COSMOS*", LabelFilter.Null);
