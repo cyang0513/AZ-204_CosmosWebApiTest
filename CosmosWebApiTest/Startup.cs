@@ -39,7 +39,13 @@ namespace CosmosWebApiTest
       public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
       {
          app.UseDeveloperExceptionPage();
-         app.UseSwagger();
+
+         // Enable middleware to serve generated Swagger as a JSON endpoint.
+         app.UseSwagger(c =>
+         {
+            c.SerializeAsV2 = true; //support logic app custom connector
+         });
+
          app.UseSwaggerUI(c =>
          {
             c.SwaggerEndpoint("/swagger/v1/swagger.json", "CosmosWebApiTest v1");
