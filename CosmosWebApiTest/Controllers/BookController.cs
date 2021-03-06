@@ -44,16 +44,16 @@ namespace CosmosWebApiTest.Controllers
       }
 
       [HttpPost, Route("Book/Add")]
-      public async Task<string> Create(Book book)
+      public async Task<Book> Create(Book book)
       {
          if (m_Container.GetItemLinqQueryable<Book>(true).Count(x => x.BookName == book.BookName) == 0)
          {
             var bookCreate = await m_Container.CreateItemAsync<Book>(book, new PartitionKey(book.Category));
 
-            return bookCreate.Resource.id;
+            return bookCreate.Resource;
          }
 
-         return "Book with same name has been added.";
+         return null;
       }
 
       [HttpDelete, Route("Book/Delete")]
