@@ -89,9 +89,9 @@ namespace CosmosWebApiTest.Controllers
       }
 
       [HttpDelete, Route("Book/Subscribe/{callbackId}", Name = nameof(Unsubscribe))]
-      public IActionResult Unsubscribe(string callbackID)
+      public IActionResult Unsubscribe(string callbackId)
       {
-         var callBack = m_Callbacks.Where(x => x.Id.ToString() == callbackID).FirstOrDefault();
+         var callBack = m_Callbacks.Where(x => x.Id.ToString() == callbackId).FirstOrDefault();
          m_Callbacks.Remove(callBack);
          return Ok();
       }
