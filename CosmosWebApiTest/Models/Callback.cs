@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
@@ -26,7 +27,8 @@ namespace CosmosWebApiTest
          httpClient.DefaultRequestHeaders.Accept.Clear();
          httpClient.DefaultRequestHeaders.Accept.Add( new MediaTypeWithQualityHeaderValue("application/json"));
 
-         return Task.Run(async () => await httpClient.PostAsJsonAsync(Uri, triggerOutput)).Result;
+         var postCall = httpClient.PostAsJsonAsync(Uri, JObject.FromObject(triggerOutput));
+         return Task.Run(async () => await postCall).Result;
       }
    }
 }
