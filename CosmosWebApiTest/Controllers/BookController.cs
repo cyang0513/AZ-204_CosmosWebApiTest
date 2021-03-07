@@ -54,6 +54,7 @@ namespace CosmosWebApiTest.Controllers
             m_Logger.LogTrace($"Call back count {m_Callbacks.Count}");
             foreach (var call in m_Callbacks.Values)
             {
+               m_Logger.LogTrace($"Call back Uri {call.Uri}");
                call.InvokeAsync<Book>(bookCreate.Resource);
             }
 
@@ -87,6 +88,9 @@ namespace CosmosWebApiTest.Controllers
             return BadRequest();
          }
          m_Callbacks.Add(callback.Id, callback);
+
+         m_Logger.LogTrace($"Call back added: {callback.Id} - {callback.Uri}");
+
          return CreatedAtRoute(nameof(Unsubscribe), new
          {
             subscriptionId = callback.Id
