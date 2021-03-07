@@ -54,7 +54,11 @@ namespace CosmosWebApiTest.Controllers
             m_Logger.LogTrace($"Call back count {m_Callbacks.Count}");
             foreach (var call in m_Callbacks.Values)
             {
-               m_Logger.LogTrace($"Call back Uri {call.Uri}");
+               m_Logger.LogTrace($"Call back Id: {call.Id}, Uri {call.Uri}");
+               if (call.Uri == null || call.Uri.ToString() == string.Empty)
+               {
+                  continue;
+               }
                call.InvokeAsync<Book>(bookCreate.Resource);
             }
 
@@ -85,7 +89,7 @@ namespace CosmosWebApiTest.Controllers
       {
          if (m_Callbacks.ContainsKey(callback.Id))
          {
-            return BadRequest();
+            return BadRequest(); 
          }
          m_Callbacks.Add(callback.Id, callback);
 

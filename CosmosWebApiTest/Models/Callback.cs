@@ -27,8 +27,7 @@ namespace CosmosWebApiTest
          httpClient.DefaultRequestHeaders.Accept.Clear();
          httpClient.DefaultRequestHeaders.Accept.Add( new MediaTypeWithQualityHeaderValue("application/json"));
 
-         var postCall = httpClient.PostAsJsonAsync(Uri, JObject.FromObject(triggerOutput));
-         return Task.Run(async () => await postCall).Result;
+         return Task.Run(async () => await httpClient.PostAsJsonAsync(Uri, JObject.FromObject(triggerOutput))).Result;
       }
    }
 }
