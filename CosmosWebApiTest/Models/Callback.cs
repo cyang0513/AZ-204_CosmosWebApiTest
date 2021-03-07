@@ -13,10 +13,10 @@ namespace CosmosWebApiTest
    {
       public Callback()
       {
-         this.Id = Guid.NewGuid();
+         this.Id = Guid.NewGuid().ToString();
       }
 
-      public Guid Id { get; }
+      public string Id { get; }
 
       public Uri Uri { set; get; }
 

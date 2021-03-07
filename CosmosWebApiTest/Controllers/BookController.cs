@@ -14,7 +14,7 @@ namespace CosmosWebApiTest.Controllers
    {
       ILogger m_Logger;
       static Container m_Container;
-      static readonly HashSet<Callback> m_Callbacks = new HashSet<Callback>();
+      static readonly Dictionary<string, Callback> m_Callbacks = new Dictionary<string, Callback>();
 
       public BookController(ILogger<Book> logger, IOptionsSnapshot<CosmosConn> option)
       {
@@ -38,7 +38,7 @@ namespace CosmosWebApiTest.Controllers
          return res;
       }
 
-      [HttpGet, Route("Book/{name}")]
+      [HttpGet, Route("Book/{name}", Name = "GetBook")]
       public IList<Book> Details(string name)
       {
          return m_Container.GetItemLinqQueryable<Book>(true).Where(x => x.BookName == name).ToList();
@@ -51,7 +51,8 @@ namespace CosmosWebApiTest.Controllers
          {
             var bookCreate = await m_Container.CreateItemAsync<Book>(book, new PartitionKey(book.Category));
 
-            foreach (var call in m_Callbacks)
+            m_Logger.LogTrace($"Call back count {m_Callbacks.Count}");
+            foreach (var call in m_Callbacks.Values)
             {
                call.InvokeAsync<Book>(bookCreate.Resource);
             }
@@ -81,7 +82,11 @@ namespace CosmosWebApiTest.Controllers
       [HttpPost, Route("Book/Subscribe")]
       public IActionResult Subscribe(Callback callback)
       {
-         m_Callbacks.Add(callback);
+         if (m_Callbacks.ContainsKey(callback.Id))
+         {
+            return BadRequest();
+         }
+         m_Callbacks.Add(callback.Id, callback);
          return CreatedAtRoute(nameof(Unsubscribe), new
          {
             subscriptionId = callback.Id
@@ -91,9 +96,12 @@ namespace CosmosWebApiTest.Controllers
       [HttpDelete, Route("Book/Subscribe/{callbackId}", Name = nameof(Unsubscribe))]
       public IActionResult Unsubscribe(string callbackId)
       {
-         var callBack = m_Callbacks.Where(x => x.Id.ToString() == callbackId).FirstOrDefault();
-         m_Callbacks.Remove(callBack);
-         return Ok();
+         if (m_Callbacks.ContainsKey(callbackId))
+         {
+            m_Callbacks.Remove(callbackId);
+            return Ok();
+         }
+         return BadRequest();
       }
    }
 }
