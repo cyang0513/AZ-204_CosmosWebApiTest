@@ -91,6 +91,10 @@ namespace CosmosWebApiTest.Controllers
          {
             return BadRequest(); 
          }
+         if (m_Callbacks.Values.Any(x=>x.Uri.ToString() == callback.Uri.ToString()))
+         {
+            return BadRequest(); 
+         }
          m_Callbacks.Add(callback.Id, callback);
 
          m_Logger.LogTrace($"Call back added: {callback.Id} - {callback.Uri}");
