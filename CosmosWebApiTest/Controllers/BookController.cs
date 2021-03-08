@@ -51,12 +51,13 @@ namespace CosmosWebApiTest.Controllers
          {
             var bookCreate = await m_Container.CreateItemAsync<Book>(book, new PartitionKey(book.Category));
 
-            m_Logger.LogTrace($"Call back count {m_Callbacks.Count}");
+            m_Logger.LogInformation($"Call back count {m_Callbacks.Count}");
             foreach (var call in m_Callbacks.Values)
             {
-               m_Logger.LogTrace($"Call back Id: {call.Id}, Uri {call.Uri}");
+               m_Logger.LogInformation($"Call back Id: {call.Id}, Uri {call.Uri}");
                if (call.Uri == null || call.Uri.ToString() == string.Empty)
                {
+                  m_Logger.LogInformation($"Call back Uri invalid");
                   continue;
                }
                call.InvokeAsync<Book>(bookCreate.Resource);
@@ -97,7 +98,7 @@ namespace CosmosWebApiTest.Controllers
          }
          m_Callbacks.Add(callback.Id, callback);
 
-         m_Logger.LogTrace($"Call back added: {callback.Id} - {callback.Uri}");
+         m_Logger.LogInformation($"Call back added: {callback.Id} - {callback.Uri}");
 
          var value = CreatedAtRoute(nameof(Unsubscribe), new {callbackId = callback.Id}, string.Empty);
          return value;
