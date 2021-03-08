@@ -99,10 +99,8 @@ namespace CosmosWebApiTest.Controllers
 
          m_Logger.LogTrace($"Call back added: {callback.Id} - {callback.Uri}");
 
-         return CreatedAtRoute(nameof(Unsubscribe), new
-         {
-            subscriptionId = callback.Id
-         }, string.Empty);
+         var value = CreatedAtRoute(nameof(Unsubscribe), new {callbackId = callback.Id}, string.Empty);
+         return value;
       }
 
       [HttpDelete, Route("Book/Subscribe/{callbackId}", Name = nameof(Unsubscribe))]
