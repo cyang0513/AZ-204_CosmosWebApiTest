@@ -44,6 +44,12 @@ namespace CosmosWebApiTest.Controllers
          return m_Container.GetItemLinqQueryable<Book>(true).Where(x => x.BookName == name).ToList();
       }
 
+      [HttpGet, Route("Book/Sys")]
+      public string GetSys()
+      {
+         return Environment.MachineName + " " + Environment.OSVersion;
+      }
+
       [HttpPost, Route("Book/Add")]
       public async Task<Book> Create(Book book)
       {
